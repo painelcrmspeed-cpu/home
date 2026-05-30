@@ -1,5 +1,6 @@
 'use strict';
 
+<<<<<<< HEAD
 /*
   CONFIGURAÇÃO RÁPIDA
   1) Troque o número abaixo pelo WhatsApp comercial da CRMSPEED.
@@ -100,3 +101,9 @@ function initSmoothAnchors() {
     });
   });
 }
+=======
+document.addEventListener('DOMContentLoaded', () => {
+  MenuController.init();
+  AnimationController.init();
+});
+>>>>>>> dbbef4fab246dca1802bf42bb06395c51a38381a

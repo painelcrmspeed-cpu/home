@@ -5,6 +5,7 @@ create table if not exists public.leads (
   name text not null,
   phone text,
   niche text,
+  ramo text,
   model text,
   source text default 'direto',
   campaign text,
@@ -14,3 +15,6 @@ create table if not exists public.leads (
 );
 -- RLS ligado e sem policies: so a service role (rota /api/leads) escreve e le.
 alter table public.leads enable row level security;
+
+-- se a tabela ja existia antes desta versao:
+alter table public.leads add column if not exists ramo text;

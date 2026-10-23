@@ -62,3 +62,5 @@ details{background:#fff;border-radius:12px;padding:1rem 1.2rem;margin-bottom:.6r
 .sub-card{background:var(--ink);color:#fff;border-radius:18px;padding:1.5rem;display:flex;flex-direction:column;gap:.5rem}
 .sub-card strong{font-size:1.5rem}.sub-card p{margin:0;opacity:.85}.sub-card small{color:var(--hl);font-weight:700}
 .cycles{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}.cycles span{background:#fff;border-radius:99px;padding:.35rem .9rem;font-weight:600;font-size:.9rem}
+.ramo-select{margin-top:1.5rem}.ramo-select label{display:flex;flex-direction:column;gap:.4rem;font-weight:600;max-width:420px}
+.ramo-select select{font:inherit;padding:.8rem;border:2px solid #D8DED7;border-radius:10px;background:#fff}

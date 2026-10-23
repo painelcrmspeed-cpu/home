@@ -9,6 +9,7 @@ export async function POST(req: Request) {
     name: clean(b?.name, 80),
     phone: clean(b?.phone, 30),
     niche: clean(b?.niche, 40),
+    ramo: clean(b?.ramo, 60),
     model: clean(b?.model, 40),
     source: clean(b?.source, 40) || "direto",
     campaign: clean(b?.campaign, 60),
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
         from: LEAD_FROM_EMAIL,
         to: LEAD_NOTIFY_EMAIL,
         subject: `Novo lead: ${lead.name} (${lead.niche}, ${lead.model})`,
-        text: `Nome: ${lead.name}\nWhatsApp: ${lead.phone || "-"}\nRamo: ${lead.niche}\nModelo: ${lead.model}\nOrigem: ${lead.source}\nCampanha: ${lead.campaign || "-"}`,
+        text: `Nome: ${lead.name}\nWhatsApp: ${lead.phone || "-"}\nRamo: ${lead.ramo || lead.niche}\nModelo: ${lead.model}\nOrigem: ${lead.source}\nCampanha: ${lead.campaign || "-"}`,
       }),
     }));
   }

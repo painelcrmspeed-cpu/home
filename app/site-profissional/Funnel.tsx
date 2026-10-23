@@ -23,20 +23,16 @@ const MODELS = [
   { id: "minimal", label: "Minimal", desc: "Muito espaço e tipografia. Elegante e leve." },
 ];
 
-function Mini({ n, m }: { n: Niche; m: string }) {
-  const style = { "--bg": n.bg, "--ink": n.ink, "--ac": n.ac } as React.CSSProperties;
+function Shot({ n, m }: { n: Niche; m: string }) {
   return (
-    <div className={`mini mini-${m}`} style={style} aria-hidden="true">
-      <div className="mini-bar"><i /><i /><i /></div>
-      <div className="mini-body">
-        <div className="mini-nav"><b>{n.biz}</b><span /><span /><span /></div>
-        <div className="mini-hero">
-          <div className="mini-copy"><h4>{n.tag}</h4><p /><p /><em>Falar agora</em></div>
-          <div className="mini-img" />
-        </div>
-        <div className="mini-cards"><u /><u /><u /></div>
-      </div>
-    </div>
+    <img
+      className="shot"
+      src={`/modelos/${n.id}/${m}.webp`}
+      alt={`Exemplo de site de ${n.label}, modelo ${m}`}
+      width={960}
+      height={600}
+      loading="lazy"
+    />
   );
 }
 
@@ -93,7 +89,7 @@ export default function Funnel() {
           <div className="grid g4">
             {NICHES.map((n) => (
               <button key={n.id} className="pick" onClick={() => { setNiche(n); setModel(null); setStep(2); }}>
-                <Mini n={n} m="classico" />
+                <Shot n={n} m="classico" />
                 <span>{n.label}</span>
               </button>
             ))}
@@ -105,11 +101,11 @@ export default function Funnel() {
       {step === 2 && niche && (
         <>
           <h2>Escolha um dos 4 modelos para {niche.label.toLowerCase()}</h2>
-          <p className="sub">Nenhum é definitivo. Cada site é montado com a sua cara, as suas cores e o seu logotipo.</p>
+          <p className="sub">Estes são exemplos. O seu site é montado do zero, com a sua marca, as suas cores e o seu logotipo.</p>
           <div className="grid g2">
             {MODELS.map((m) => (
               <button key={m.id} className={`pick big ${model === m.id ? "sel" : ""}`} aria-pressed={model === m.id} onClick={() => setModel(m.id)}>
-                <Mini n={niche} m={m.id} />
+                <Shot n={niche} m={m.id} />
                 <span><b>{m.label}</b> {m.desc}</span>
               </button>
             ))}
@@ -123,7 +119,7 @@ export default function Funnel() {
 
       {step === 3 && niche && model && (
         <div className="final">
-          <div className="final-prev"><Mini n={niche} m={model} /></div>
+          <div className="final-prev"><Shot n={niche} m={model} /></div>
           <form onSubmit={send}>
             <h2>Vamos conversar sobre o seu site</h2>
             <p className="sub">Você escolheu o modelo {modelLabel} para {niche.label.toLowerCase()}. No WhatsApp eu mostro como ele fica com a sua marca. Não precisa pagar nada para começar.</p>

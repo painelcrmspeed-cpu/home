@@ -25,7 +25,21 @@ const STEPS = [
   ["Site no ar", "Você aprova, paga e publicamos. O domínio fica no seu nome."],
 ];
 
+const WAY = [
+  ["Tudo no seu nome", "GitHub, Vercel, Supabase, Resend e domínio são criados com o seu e-mail e o seu celular."],
+  ["Sem prender você", "O código, o domínio e os acessos são seus. Se quiser seguir sozinho, é só me remover da conta."],
+  ["Plano pago só quando precisa", "Site de negócio na Vercel pede o plano Pro. Eu explico antes, e você assina direto na sua conta."],
+  ["Eu cuido da parte técnica", "Eu monto, publico e deixo funcionando. Você não precisa saber programar."],
+];
+
+const SUBS = [
+  { n: "Manutenção do site", p: "a partir de R$ 79/mês", d: "Ajustes pequenos, troca de textos e fotos, monitoramento e suporte pelo WhatsApp.", t: "Para sites institucionais" },
+  { n: "Loja e sistemas", p: "a partir de R$ 149/mês", d: "Tudo da manutenção, mais correções, atualizações, cuidado com o banco de dados e suporte com prioridade.", t: "Para lojas, painéis e sites dinâmicos" },
+];
+
 const FAQ = [
+  ["Eu preciso ter conta na Vercel e no GitHub?", "Sim, no seu nome. Eu te guio na criação, e você me convida para trabalhar no projeto. O site nunca fica preso comigo."],
+  ["Como funciona a assinatura?", "É opcional para sites simples e recomendada para lojas e sistemas. Você escolhe pagar por mês, por semestre ou por ano, e os planos maiores têm desconto."],
   ["Preciso pagar antes de conversar?", "Não. Primeiro a conversa e a prévia. O pagamento entra depois que você aprova a proposta."],
   ["Em quanto tempo fica pronto?", "Menos de uma semana, contando a partir do dia em que você me envia textos e fotos."],
   ["O domínio está incluso?", "Não. Você registra o seu (.com, .com.br, .net) no seu nome e eu ajudo a escolher e configurar."],
@@ -60,6 +74,25 @@ export default function Page() {
           ))}
         </div>
         <p className="note">Logotipo grátis em todos. Domínio pago por você, em separado, no seu nome.</p>
+      </section>
+
+      <section className="wrap block">
+        <h2>Como eu trabalho com você</h2>
+        <div className="way">
+          {WAY.map(([t, d]) => (<div key={t}><b>{t}</b><span>{d}</span></div>))}
+        </div>
+      </section>
+
+      <section className="wrap block">
+        <h2>Manutenção por assinatura</h2>
+        <div className="subs">
+          {SUBS.map((s) => (
+            <article key={s.n} className="sub-card">
+              <small>{s.t}</small><h3>{s.n}</h3><strong>{s.p}</strong><p>{s.d}</p>
+            </article>
+          ))}
+        </div>
+        <div className="cycles"><span>Mensal</span><span>Semestral, com 10% de desconto</span><span>Anual, com 20% de desconto</span></div>
       </section>
 
       <section className="wrap block narrow">

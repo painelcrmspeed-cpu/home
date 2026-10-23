@@ -1,17 +1,8 @@
 {
-  "name": "crm-front-end",
+  "name": "site-profissional",
   "version": "1.0.0",
-  "description": "Landing page institucional do **CRMSPEED**, plataforma SaaS de CRM para equipes comerciais e revendedores.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "dependencies": {
-    "ejs": "^6.0.1",
-    "express": "^5.2.1"
-  }
+  "private": true,
+  "scripts": { "dev": "next dev", "build": "next build", "start": "next start" },
+  "dependencies": { "next": "^15.5.0", "react": "^19.0.0", "react-dom": "^19.0.0" },
+  "devDependencies": { "@types/node": "^22.0.0", "@types/react": "^19.0.0", "@types/react-dom": "^19.0.0", "typescript": "^5.0.0" }
 }

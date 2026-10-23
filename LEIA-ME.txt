@@ -1,0 +1,4 @@
+1) copie .env.example para .env.local e coloque seu numero de WhatsApp (com 55 e DDD)
+2) npm install
+3) npm run dev
+4) abra http://localhost:3000

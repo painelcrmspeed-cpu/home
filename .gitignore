@@ -1,8 +1,6 @@
-.DS_Store
-Thumbs.db
-*.log
-node_modules/
-dist/
+node_modules
+.next
 .env
 .env.local
-.vercel
+next-env.d.ts
+*.tsbuildinfo

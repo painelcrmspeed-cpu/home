@@ -1,0 +1,3 @@
+*,*::before,*::after{box-sizing:border-box}
+html{background:#EEF1EC}
+body{margin:0}

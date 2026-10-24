@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, DM_Sans } from "next/font/google";
-import Funnel from "./Funnel";
+import fs from "node:fs";
+import path from "node:path";
+import Funnel, { type NicheData } from "./Funnel";
 import "./site-profissional.css";
 
 const display = Bricolage_Grotesque({ subsets: ["latin"], variable: "--f-display" });
@@ -46,6 +48,52 @@ const FAQ = [
   ["O logotipo é cobrado?", "Não. Todos os pacotes incluem logotipo, com 2 opções e 1 rodada de ajustes."],
 ];
 
+// ---- Lê a pasta public/modelos na hora do build: cada pasta é um ramo, cada imagem é um modelo.
+const IMG = /\.(webp|png|jpe?g|avif)$/i;
+const slug = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+const LABELS: Record<string, string> = {
+  landingpage: "Página de vendas", prestador: "Prestador de serviços", advogado: "Advocacia", "medico-consultorio": "Médico e consultório",
+  medico: "Médico e consultório", dentista: "Dentista", clinica: "Clínica", terapeuta: "Terapeuta", personal: "Personal trainer",
+  barbearia: "Barbearia e salão", restaurante: "Restaurante", loja: "Loja de roupas", oficina: "Oficina mecânica", contador: "Contabilidade",
+};
+const ORDER = Object.keys(LABELS);
+const LAYOUTS: Record<string, [string, string]> = {
+  classico: ["Clássico", "Texto e imagem lado a lado. Passa confiança."],
+  vitrine: ["Vitrine", "Seus serviços em destaque logo na abertura."],
+  impacto: ["Impacto", "Abertura escura e grande, feita para marcar."],
+  minimal: ["Minimal", "Muito espaço e tipografia. Elegante e leve."],
+};
+const humanize = (s: string) => { const t = s.replace(/[-_]+/g, " ").trim(); return t.charAt(0).toUpperCase() + t.slice(1); };
+
+function loadNiches(): NicheData[] {
+  const root = path.join(process.cwd(), "public", "modelos");
+  if (!fs.existsSync(root)) return [];
+  const list: NicheData[] = [];
+  for (const d of fs.readdirSync(root, { withFileTypes: true })) {
+    if (!d.isDirectory() || d.name.startsWith("_")) continue;
+    const files = fs.readdirSync(path.join(root, d.name)).filter((f) => IMG.test(f)).sort((a, b) => a.localeCompare(b, "pt-BR", { numeric: true }));
+    if (files.length === 0) continue;
+    const key = slug(d.name);
+    list.push({
+      id: d.name,
+      key,
+      label: LABELS[key] ?? humanize(d.name),
+      images: files.map((f, i) => {
+        const id = f.replace(/\.[^.]+$/, "");
+        const lay = LAYOUTS[slug(id)];
+        return {
+          src: `/modelos/${encodeURIComponent(d.name)}/${encodeURIComponent(f)}`,
+          id,
+          label: lay ? lay[0] : `Modelo ${i + 1}`,
+          desc: lay ? lay[1] : "",
+        };
+      }),
+    });
+  }
+  const rank = (k: string) => { const i = ORDER.indexOf(k); return i < 0 ? 99 : i; };
+  return list.sort((a, b) => rank(a.key) - rank(b.key) || a.label.localeCompare(b.label, "pt-BR"));
+}
+
 export default function Page() {
   return (
     <main className={`sp ${display.variable} ${body.variable}`}>
@@ -54,7 +102,7 @@ export default function Page() {
         <p>Escolha seu ramo, veja 4 modelos e fale comigo no WhatsApp. Logotipo grátis em todos os pacotes.</p>
       </header>
 
-      <section className="wrap"><Funnel /></section>
+      <section className="wrap"><Funnel niches={loadNiches()} /></section>
 
       <section className="wrap block">
         <h2>Como funciona</h2>

@@ -1,51 +1,64 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, DM_Sans } from "next/font/google";
 import fs from "node:fs";
 import path from "node:path";
+import { Bricolage_Grotesque, DM_Sans } from "next/font/google";
 import Funnel, { type NicheData } from "./Funnel";
+import ContactForm from "./ContactForm";
 import "./site-profissional.css";
 
 const display = Bricolage_Grotesque({ subsets: ["latin"], variable: "--f-display" });
 const body = DM_Sans({ subsets: ["latin"], variable: "--f-body" });
 const WA = process.env.NEXT_PUBLIC_WHATSAPP ?? "5521999999999";
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.mundohoje.online";
+const NAME = "Mundo Hoje"; // troque pelo nome da sua marca
+
+const TITLE = "Criação de Sites Profissionais | Prazos de 7 a 15 dias";
+const DESC = "Site institucional, profissional ou dinâmico com logotipo grátis. Escolha o seu ramo, veja modelos prontos e fale comigo no WhatsApp. Sem pagar para começar a conversa.";
 
 export const metadata: Metadata = {
-  title: "Seu site profissional no ar em menos de uma semana",
-  description: "Escolha seu ramo, veja 4 modelos de site e fale direto comigo. Logotipo grátis em todos os pacotes.",
+  metadataBase: new URL(SITE),
+  title: TITLE,
+  description: DESC,
+  alternates: { canonical: "/" },
+  robots: { index: true, follow: true },
+  openGraph: { type: "website", locale: "pt_BR", url: "/", siteName: NAME, title: TITLE, description: DESC, images: [{ url: "/og.png", width: 1200, height: 630, alt: "Criação de sites profissionais" }] },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESC, images: ["/og.png"] },
 };
 
 const PLANS = [
-  { n: "Essencial", p: "R$ 400", d: "Até 4 páginas simples, ou 1 página com até 5 seções. Botão de WhatsApp, SEO básico e formulário de contato.", hi: false },
-  { n: "Profissional", p: "a partir de R$ 600", d: "Até 5 páginas, blog ou portfólio, e-mail automático do formulário, Google Analytics e domínio conectado.", hi: true },
-  { n: "Dinâmico", p: "a partir de R$ 2.000", d: "Tudo do Profissional, com painel administrativo, login e conteúdo que você mesmo edita.", hi: false },
+  { n: "Essencial", p: "R$ 400", prazo: "Pronto em até 7 dias", hi: false, itens: ["Até 4 páginas simples, ou 1 página com até 5 seções", "Site responsivo (celular e computador)", "Botão de WhatsApp e SEO básico", "Formulário de contato por e-mail", "Logotipo grátis", "Conectamos o seu domínio"] },
+  { n: "Profissional", p: "a partir de R$ 600", prazo: "Pronto em até 10 dias", hi: true, itens: ["Até 5 páginas, com blog ou portfólio", "Formulário com e-mail automático", "Google Analytics e SEO", "Logotipo grátis", "Conectamos o seu domínio", "15 dias de manutenção grátis após a entrega"] },
+  { n: "Dinâmico", p: "a partir de R$ 2.000", prazo: "Pronto em até 15 dias", hi: false, itens: ["Tudo do Profissional", "Painel administrativo, banco de dados e login", "Conteúdo que você mesmo edita", "Logotipo grátis", "Domínio grátis", "30 dias de manutenção grátis após a entrega"] },
+];
+
+const MAINT = [
+  ["Essencial", "R$ 50/mês", "2 alterações", "-"],
+  ["Profissional", "R$ 60/mês", "5 alterações", "15 dias"],
+  ["Dinâmico", "R$ 120/mês", "10 alterações", "30 dias"],
 ];
 
 const STEPS = [
   ["Você escolhe", "Ramo e modelo, em 1 minuto, aqui na página."],
-  ["A gente conversa", "No WhatsApp, sem compromisso, para entender seu negócio."],
-  ["Você vê a prévia", "Em poucos dias, com a sua marca, num link para testar."],
-  ["Site no ar", "Você aprova, paga e publicamos. O domínio fica no seu nome."],
+  ["A gente conversa", "No WhatsApp, sem compromisso: entendo o seu negócio e envio a proposta com valor e prazo."],
+  ["Você acompanha", "Aprovada a proposta, eu monto o site e você vê a prévia num link para testar."],
+  ["Site no ar", "Você aprova, publicamos e conectamos o seu domínio."],
 ];
 
 const WAY = [
-  ["Tudo no seu nome", "GitHub, Vercel, Supabase, Resend e domínio são criados com o seu e-mail e o seu celular."],
-  ["Sem prender você", "O código, o domínio e os acessos são seus. Se quiser seguir sozinho, é só me remover da conta."],
-  ["Plano pago só quando precisa", "Site de negócio na Vercel pede o plano Pro. Eu explico antes, e você assina direto na sua conta."],
-  ["Eu cuido da parte técnica", "Eu monto, publico e deixo funcionando. Você não precisa saber programar."],
-];
-
-const SUBS = [
-  { n: "Manutenção do site", p: "a partir de R$ 79/mês", d: "Ajustes pequenos, troca de textos e fotos, monitoramento e suporte pelo WhatsApp.", t: "Para sites institucionais" },
-  { n: "Loja e sistemas", p: "a partir de R$ 149/mês", d: "Tudo da manutenção, mais correções, atualizações, cuidado com o banco de dados e suporte com prioridade.", t: "Para lojas, painéis e sites dinâmicos" },
+  ["Conversa sem compromisso", "Você escolhe o modelo e fala comigo. O pagamento só entra depois que você aprova a proposta."],
+  ["O site é seu", "O domínio fica no seu nome e o projeto não fica preso comigo."],
+  ["Prazos claros", "Cada pacote tem o seu prazo, combinado por escrito antes de começar."],
+  ["Suporte depois da entrega", "Profissional tem 15 dias de manutenção grátis e Dinâmico tem 30."],
 ];
 
 const FAQ = [
-  ["Eu preciso ter conta na Vercel e no GitHub?", "Sim, no seu nome. Eu te guio na criação, e você me convida para trabalhar no projeto. O site nunca fica preso comigo."],
-  ["Como funciona a assinatura?", "É opcional para sites simples e recomendada para lojas e sistemas. Você escolhe pagar por mês, por semestre ou por ano, e os planos maiores têm desconto."],
-  ["Preciso pagar antes de conversar?", "Não. Primeiro a conversa e a prévia. O pagamento entra depois que você aprova a proposta."],
-  ["Em quanto tempo fica pronto?", "Menos de uma semana, contando a partir do dia em que você me envia textos e fotos."],
-  ["O domínio está incluso?", "Não. Você registra o seu (.com, .com.br, .net) no seu nome e eu ajudo a escolher e configurar."],
+  ["Preciso pagar antes de conversar?", "Não. Primeiro conversamos pelo WhatsApp, eu mostro como o modelo fica com a sua marca e envio a proposta. O pagamento só entra depois que você aprova."],
+  ["Em quanto tempo fica pronto?", "Essencial em até 7 dias, Profissional em até 10 e Dinâmico em até 15. O prazo começa quando a proposta é aprovada e você envia textos e fotos."],
+  ["O domínio está incluso?", "No Dinâmico, o domínio é grátis. No Essencial e no Profissional, você registra o seu (.com, .com.br, .net) no seu nome, eu ajudo a escolher e conecto ao site."],
   ["O logotipo é cobrado?", "Não. Todos os pacotes incluem logotipo, com 2 opções e 1 rodada de ajustes."],
+  ["Como funciona a manutenção?", "Profissional tem 15 dias grátis após a entrega e Dinâmico tem 30. Depois, você pode assinar: Essencial R$ 50/mês (2 alterações), Profissional R$ 60/mês (5) e Dinâmico R$ 120/mês (10)."],
+  ["Tenho um supermercado ou loja com mudanças todo dia.", "Nesse caso o atendimento é por contrato personalizado. Fale comigo pelo WhatsApp ou pelo formulário no fim da página."],
+  ["Posso falar com você sem usar o WhatsApp?", "Sim. Use o formulário no fim da página e eu respondo por e-mail ou telefone."],
 ];
 
 // ---- Lê a pasta public/modelos na hora do build: cada pasta é um ramo, cada imagem é um modelo.
@@ -81,12 +94,7 @@ function loadNiches(): NicheData[] {
       images: files.map((f, i) => {
         const id = f.replace(/\.[^.]+$/, "");
         const lay = LAYOUTS[slug(id)];
-        return {
-          src: `/modelos/${encodeURIComponent(d.name)}/${encodeURIComponent(f)}`,
-          id,
-          label: lay ? lay[0] : `Modelo ${i + 1}`,
-          desc: lay ? lay[1] : "",
-        };
+        return { src: `/modelos/${encodeURIComponent(d.name)}/${encodeURIComponent(f)}`, id, label: lay ? lay[0] : `Modelo ${i + 1}`, desc: lay ? lay[1] : "" };
       }),
     });
   }
@@ -94,12 +102,22 @@ function loadNiches(): NicheData[] {
   return list.sort((a, b) => rank(a.key) - rank(b.key) || a.label.localeCompare(b.label, "pt-BR"));
 }
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "ProfessionalService", name: NAME, url: SITE, areaServed: "BR", description: DESC, priceRange: "R$ 400 a R$ 3.500" },
+    { "@type": "FAQPage", mainEntity: FAQ.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) },
+  ],
+};
+
 export default function Page() {
   return (
     <main className={`sp ${display.variable} ${body.variable}`}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <header className="hero">
         <h1>Seu site profissional no ar em menos de uma semana</h1>
-        <p>Escolha seu ramo, veja 4 modelos e fale comigo no WhatsApp. Logotipo grátis em todos os pacotes.</p>
+        <p>Escolha seu ramo, veja modelos prontos e fale comigo no WhatsApp. Logotipo grátis em todos os pacotes.</p>
+        <p className="prazos"><span>Essencial: até 7 dias</span><span>Profissional: até 10 dias</span><span>Dinâmico: até 15 dias</span></p>
       </header>
 
       <section className="wrap"><Funnel niches={loadNiches()} /></section>
@@ -111,17 +129,33 @@ export default function Page() {
         </ol>
       </section>
 
-      <section className="wrap block">
-        <h2>Pacotes</h2>
+      <section className="wrap block" id="pacotes">
+        <h2>Pacotes e prazos</h2>
         <div className="grid g3">
           {PLANS.map((p) => (
             <article key={p.n} className={`plan ${p.hi ? "hi" : ""}`}>
               {p.hi && <small>Mais escolhido</small>}
-              <h3>{p.n}</h3><strong>{p.p}</strong><p>{p.d}</p>
+              <h3>{p.n}</h3><strong>{p.p}</strong><span className="prazo">{p.prazo}</span>
+              <ul>{p.itens.map((i) => (<li key={i}>{i}</li>))}</ul>
             </article>
           ))}
         </div>
-        <p className="note">Logotipo grátis em todos. Domínio pago por você, em separado, no seu nome.</p>
+        <p className="fine">O prazo começa quando a proposta é aprovada e você envia textos e fotos. O registro do domínio (.com, .com.br, .net) é pago por você nos pacotes Essencial e Profissional.</p>
+        <div className="custom">
+          <p><b>Supermercado ou loja com alterações todos os dias?</b> Fazemos contrato personalizado, com atendimento e manutenção sob medida.</p>
+          <a href={`https://wa.me/${WA}?text=${encodeURIComponent("Olá! Tenho uma loja e preciso de um contrato personalizado.")}`}>Pedir contrato personalizado</a>
+        </div>
+      </section>
+
+      <section className="wrap block">
+        <h2>Manutenção depois da entrega</h2>
+        <div className="mwrap">
+          <table className="mtable">
+            <thead><tr><th>Pacote</th><th>Mensalidade</th><th>Alterações por mês</th><th>Grátis após a entrega</th></tr></thead>
+            <tbody>{MAINT.map(([a, b, c, d]) => (<tr key={a}><td><b>{a}</b></td><td>{b}</td><td>{c}</td><td>{d}</td></tr>))}</tbody>
+          </table>
+        </div>
+        <p className="fine">Planos semestral e anual com desconto, combinados na conversa.</p>
       </section>
 
       <section className="wrap block">
@@ -131,22 +165,18 @@ export default function Page() {
         </div>
       </section>
 
-      <section className="wrap block">
-        <h2>Manutenção por assinatura</h2>
-        <div className="subs">
-          {SUBS.map((s) => (
-            <article key={s.n} className="sub-card">
-              <small>{s.t}</small><h3>{s.n}</h3><strong>{s.p}</strong><p>{s.d}</p>
-            </article>
-          ))}
-        </div>
-        <div className="cycles"><span>Mensal</span><span>Semestral, com 10% de desconto</span><span>Anual, com 20% de desconto</span></div>
-      </section>
-
       <section className="wrap block narrow">
         <h2>Perguntas frequentes</h2>
         {FAQ.map(([q, a]) => (<details key={q}><summary>{q}</summary><p>{a}</p></details>))}
       </section>
+
+      <section className="wrap block narrow" id="contato">
+        <h2>Prefere não usar o WhatsApp?</h2>
+        <p className="sub">Deixe a sua mensagem e eu respondo por e-mail ou telefone.</p>
+        <ContactForm />
+      </section>
+
+      <footer className="foot">© {new Date().getFullYear()} {NAME} · <a href="/privacidade">Política de privacidade</a></footer>
 
       <a className="wa-float" href={`https://wa.me/${WA}?text=${encodeURIComponent("Olá! Quero saber mais sobre o site profissional.")}`} aria-label="Falar no WhatsApp">WhatsApp</a>
     </main>

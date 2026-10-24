@@ -65,7 +65,7 @@ export default function Funnel({ niches }: { niches: NicheData[] }) {
       method: "POST",
       keepalive: true,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, phone, niche: niche.key, ramo, model: model.id, source, campaign: q.get("utm_campaign") ?? "" }),
+      body: JSON.stringify({ name, phone, niche: niche.key, ramo, model: model.id, channel: "whatsapp", source, campaign: q.get("utm_campaign") ?? "" }),
     }).catch(() => {});
     const msg = `Olá! Sou ${name.trim()}, vim pelo ${source}. Meu ramo é ${ramo || niche.label} e gostei do modelo ${model.label} (${niche.label}). Quero meu site.`;
     go(`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`);

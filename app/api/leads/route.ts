@@ -28,16 +28,25 @@ export async function POST(req: Request) {
   }
 
   const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY: KEY, RESEND_API_KEY, LEAD_NOTIFY_EMAIL, LEAD_FROM_EMAIL } = process.env;
+  const names: string[] = [];
   const jobs: Promise<Response>[] = [];
 
   if (SUPABASE_URL && KEY) {
+    names.push("supabase");
     jobs.push(fetch(`${SUPABASE_URL}/rest/v1/leads`, {
       method: "POST",
-      headers: { apikey: KEY, Authorization: `Bearer ${KEY}`, "Content-Type": "application/json", Prefer: "return=minimal" },
+      headers: {
+        apikey: KEY,
+        // a chave antiga (service_role) e um JWT que comeca com "eyJ"; a chave nova (sb_secret_...) vai so no apikey
+        ...(KEY.startsWith("eyJ") ? { Authorization: `Bearer ${KEY}` } : {}),
+        "Content-Type": "application/json",
+        Prefer: "return=minimal",
+      },
       body: JSON.stringify(lead),
     }));
   }
   if (RESEND_API_KEY && LEAD_NOTIFY_EMAIL && LEAD_FROM_EMAIL) {
+    names.push("resend");
     jobs.push(fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
@@ -54,11 +63,22 @@ export async function POST(req: Request) {
         ].join("\n"),
       }),
     }));
+  } else {
+    console.error("lead: Resend nao configurado (faltam RESEND_API_KEY, LEAD_FROM_EMAIL ou LEAD_NOTIFY_EMAIL)");
   }
+
   const results = await Promise.allSettled(jobs);
-  results.forEach((r, i) => {
-    if (r.status === "rejected") console.error("lead: erro no servico", i, r.reason);
-    else if (!r.value.ok) console.error("lead: resposta com erro", i, r.value.status);
-  });
+  let okCount = 0;
+  for (let i = 0; i < results.length; i++) {
+    const r = results[i];
+    if (r.status === "rejected") console.error(`lead: ${names[i]} falhou`, r.reason);
+    else if (!r.value.ok) console.error(`lead: ${names[i]} respondeu erro`, r.value.status, await r.value.text().catch(() => ""));
+    else okCount++;
+  }
+
+  // No formulário, se nada foi entregue (nem e-mail, nem banco), avisa a pessoa em vez de fingir que deu certo.
+  if (lead.channel === "formulario" && okCount === 0) {
+    return NextResponse.json({ ok: false }, { status: 502 });
+  }
   return NextResponse.json({ ok: true });
 }

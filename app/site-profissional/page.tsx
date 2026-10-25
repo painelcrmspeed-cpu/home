@@ -68,6 +68,10 @@ const LABELS: Record<string, string> = {
   landingpage: "Página de vendas", prestador: "Prestador de serviços", advogado: "Advocacia", "medico-consultorio": "Médico e consultório",
   medico: "Médico e consultório", dentista: "Dentista", clinica: "Clínica", terapeuta: "Terapeuta", personal: "Personal trainer",
   barbearia: "Barbearia e salão", restaurante: "Restaurante", loja: "Loja de roupas", oficina: "Oficina mecânica", contador: "Contabilidade",
+  salao: "Salão de beleza", manicure: "Manicure e sobrancelha", petshop: "Pet shop", nutricao: "Nutrição", fisioterapia: "Fisioterapia",
+  imobiliaria: "Imobiliária e corretor", eletricista: "Elétrica e hidráulica", construcao: "Construção e reformas", pizzaria: "Pizzaria",
+  confeitaria: "Confeitaria e doces", fotografia: "Fotografia", eventos: "Buffet e eventos", estetica: "Estética e spa", pilates: "Pilates e yoga",
+  veterinario: "Veterinário", consultoria: "Consultoria e coaching", escola: "Escola e cursos", autopecas: "Lava-jato e autopeças", calcados: "Calçados e acessórios",
 };
 const ORDER = Object.keys(LABELS);
 const LAYOUTS: Record<string, [string, string]> = {
@@ -76,6 +80,7 @@ const LAYOUTS: Record<string, [string, string]> = {
   impacto: ["Impacto", "Abertura escura e grande, feita para marcar."],
   minimal: ["Minimal", "Muito espaço e tipografia. Elegante e leve."],
 };
+const GENERIC = /(image|imagem|chatgpt|gemini|dola|captura|screenshot|^\d+$|^modelo)/;
 const humanize = (s: string) => { const t = s.replace(/[-_]+/g, " ").trim(); return t.charAt(0).toUpperCase() + t.slice(1); };
 
 function loadNiches(): NicheData[] {
@@ -86,15 +91,19 @@ function loadNiches(): NicheData[] {
     if (!d.isDirectory() || d.name.startsWith("_")) continue;
     const files = fs.readdirSync(path.join(root, d.name)).filter((f) => IMG.test(f)).sort((a, b) => a.localeCompare(b, "pt-BR", { numeric: true }));
     if (files.length === 0) continue;
-    const key = slug(d.name);
+    const k0 = slug(d.name);
+    const key = k0 === "medico" ? "medico-consultorio" : k0;
     list.push({
       id: d.name,
       key,
       label: LABELS[key] ?? humanize(d.name),
       images: files.map((f, i) => {
         const id = f.replace(/\.[^.]+$/, "");
-        const lay = LAYOUTS[slug(id)];
-        return { src: `/modelos/${encodeURIComponent(d.name)}/${encodeURIComponent(f)}`, id, label: lay ? lay[0] : `Modelo ${i + 1}`, desc: lay ? lay[1] : "" };
+        const s = slug(id);
+        const lay = LAYOUTS[s];
+        const generic = GENERIC.test(s) || s.length > 30;
+        const label = lay ? lay[0] : generic ? `Modelo ${i + 1}` : humanize(s);
+        return { src: `/modelos/${encodeURIComponent(d.name)}/${encodeURIComponent(f)}`, id, label, desc: "" };
       }),
     });
   }

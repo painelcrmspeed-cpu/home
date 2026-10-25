@@ -21,7 +21,8 @@ for (const d of fs.readdirSync(root, { withFileTypes: true })) {
     i++;
     const input = path.join(dir, f);
     const base = slug(path.parse(f).name);
-    const outName = (["classico", "vitrine", "impacto", "minimal"].includes(base) ? base : `modelo-${i}`) + ".webp";
+    const generic = /(image|imagem|chatgpt|gemini|dola|captura|screenshot|^\d+$|^modelo)/.test(base) || base.length > 30 || base.length === 0;
+    const outName = (generic ? `modelo-${i}` : base) + ".webp";
     const output = path.join(dir, outName);
     const buf = await sharp(input).rotate().resize({ width: 1280, withoutEnlargement: true }).webp({ quality: 80 }).toBuffer();
     const size = fs.statSync(input).size;

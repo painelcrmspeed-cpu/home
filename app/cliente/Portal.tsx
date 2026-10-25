@@ -4,6 +4,7 @@ import { getSb } from "../../lib/supabase";
 
 const STATUS: Record<string, string> = { aberto: "Aberto", em_andamento: "Em andamento", aguardando_cliente: "Aguardando você", concluido: "Concluído", cancelado: "Cancelado" };
 const TYPES: Record<string, string> = { texto: "Trocar texto", imagem: "Trocar imagem ou foto", preco: "Preço ou horário", pagina: "Nova página ou seção", funcionalidade: "Funcionalidade nova", erro: "Algo quebrou", outro: "Outro" };
+const KIND: Record<string, string> = { comentario: "comentário", status: "status", registro: "atualização" };
 const LIMITS: Record<string, number> = { essencial: 2, profissional: 5, dinamico: 10 };
 const when = (d?: string) => (d ? new Date(d).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" }) : "-");
 const day = (d?: string) => (d ? new Date(d + "T12:00:00").toLocaleDateString("pt-BR") : "-");
@@ -102,7 +103,7 @@ function Thread({ t, me, admin, reload }: { t: any; me: string; admin: boolean; 
         </div>
       )}
       {ev.map((x) => (
-        <div key={x.id} className={`ev ${x.internal ? "int" : ""}`}><small>{when(x.created_at)} · {x.kind}{x.internal ? " · nota interna" : ""}</small>{x.body}</div>
+        <div key={x.id} className={`ev ${x.internal ? "int" : ""}`}><small>{when(x.created_at)} · {KIND[x.kind] ?? x.kind}{x.internal ? " · nota interna" : ""}</small>{x.body}</div>
       ))}
       <form className="contact" onSubmit={add} style={{ padding: 0, background: "none", marginTop: ".6rem" }}>
         <textarea rows={2} value={body} onChange={(e) => setBody(e.target.value)} placeholder={admin ? "Registre o que foi feito e como" : "Escreva um comentário"} maxLength={1500} />
@@ -142,7 +143,7 @@ function Client({ me }: { me: string }) {
     <>
       <div className="usage">
         {sites.map((s) => {
-          const limit = s.monthly_limit ?? LIMITS[s.plan];
+          const limit = s.monthly_limit || LIMITS[s.plan];
           const used = usedIn(s, tickets);
           const free = s.free_until && new Date(s.free_until + "T23:59:59") >= new Date();
           return (
@@ -211,11 +212,17 @@ function Admin({ me }: { me: string }) {
   async function addSite(e: React.FormEvent) {
     e.preventDefault(); setMsg("");
     const client_id = s.client_id || clients[0]?.id;
+    let free = s.free_until;
+    if (!free && s.delivered_at && (s.plan === "profissional" || s.plan === "dinamico")) {
+      const d = new Date(s.delivered_at + "T12:00:00");
+      d.setDate(d.getDate() + (s.plan === "dinamico" ? 30 : 15));
+      free = d.toISOString().slice(0, 10);
+    }
     if (!client_id) { setMsg("Crie primeiro o usuário do cliente em Authentication → Users no Supabase."); return; }
     const { error } = await getSb().from("sites").insert({
       client_id, name: s.name, url: s.url || null, plan: s.plan,
-      delivered_at: s.delivered_at || null, free_until: s.free_until || null,
-      monthly_limit: s.monthly_limit ? Number(s.monthly_limit) : LIMITS[s.plan] ?? null,
+      delivered_at: s.delivered_at || null, free_until: free || null,
+      monthly_limit: Number(s.monthly_limit) > 0 ? Number(s.monthly_limit) : LIMITS[s.plan] ?? null,
     });
     setMsg(error ? "Erro: " + error.message : "Site cadastrado."); if (!error) { setS({ ...s, name: "", url: "" }); load(); }
   }
@@ -261,7 +268,7 @@ function Admin({ me }: { me: string }) {
             </div>
             <div className="row2">
               <label>Data da entrega<input type="date" value={s.delivered_at} onChange={(e) => setS({ ...s, delivered_at: e.target.value })} /></label>
-              <label>Manutenção grátis até<input type="date" value={s.free_until} onChange={(e) => setS({ ...s, free_until: e.target.value })} /></label>
+              <label>Manutenção grátis até (vazio = calcula pelo pacote)<input type="date" value={s.free_until} onChange={(e) => setS({ ...s, free_until: e.target.value })} /></label>
             </div>
             {msg && <p role="status" style={{ margin: 0, fontWeight: 600 }}>{msg}</p>}
             <button className="cta">Cadastrar</button>

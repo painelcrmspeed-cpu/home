@@ -1,0 +1,11 @@
+.cl{padding:2rem 0 4rem}.cl header{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap}.cl header h1{font-size:1.8rem}.cl header p{margin:.2rem 0 0;opacity:.75}
+.card2{background:#fff;border-radius:16px;padding:1.2rem 1.4rem;margin-bottom:1rem}.card2 h2{font-size:1.2rem;margin-bottom:.8rem}
+.badge{display:inline-block;border-radius:99px;padding:.15rem .7rem;font-size:.8rem;font-weight:700;background:#E7EBE6;white-space:nowrap}
+.badge.aberto{background:var(--hl)}.badge.em_andamento{background:#CFE3FF}.badge.aguardando_cliente{background:#FFD9C7}.badge.concluido{background:#CDEFD6}
+.tk{width:100%;text-align:left;background:none;border:0;padding:.7rem 0;display:flex;gap:.8rem;align-items:center;border-bottom:1px solid #E7EBE6;font:inherit;flex-wrap:wrap}.tk b{flex:1;min-width:160px}.tk small{opacity:.7}
+.tabs{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}.tabs button{border:0;border-radius:99px;padding:.45rem 1.1rem;background:#E7EBE6;font-weight:600}.tabs .on{background:var(--ink);color:#fff}
+.ev{padding:.6rem .8rem;border-radius:10px;background:#F4F6F3;margin:.4rem 0;font-size:.95rem;white-space:pre-wrap}.ev.int{background:#FFF6D6}.ev small{opacity:.7;display:block}
+.usage{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-bottom:1rem}.usage>div{background:#fff;border-radius:14px;padding:1rem 1.2rem}
+.bar{height:8px;background:#E7EBE6;border-radius:9px;overflow:hidden;margin-top:.5rem}.bar i{display:block;height:100%;background:var(--ac)}
+.contact select{font:inherit;padding:.8rem;border:2px solid #D8DED7;border-radius:10px;background:#fff}
+.inline{display:flex;gap:.8rem;align-items:center;flex-wrap:wrap}.inline label{flex-direction:row;align-items:center;gap:.4rem}

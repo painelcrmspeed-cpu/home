@@ -185,7 +185,7 @@ export default function Page() {
         <ContactForm />
       </section>
 
-      <footer className="foot">© {new Date().getFullYear()} {NAME} · <a href="/privacidade">Política de privacidade</a></footer>
+      <footer className="foot">© {new Date().getFullYear()} {NAME} · <a href="/privacidade">Política de privacidade</a> · <a href="/cliente">Área do cliente</a></footer>
 
       <a className="wa-float" href={`https://wa.me/${WA}?text=${encodeURIComponent("Olá! Quero saber mais sobre o site profissional.")}`} aria-label="Falar no WhatsApp">WhatsApp</a>
     </main>
